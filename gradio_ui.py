@@ -1,4 +1,4 @@
-def upload_file(self, file, file_uploads_log, allowed_file_types=None, max_file_size_mb=100, min_free_space_mb=500):
+def upload_file(self, file, file_uploads_log, allowed_file_types=None):
         """
         Upload a file with size and disk space validation.
         """
@@ -13,6 +13,13 @@ def upload_file(self, file, file_uploads_log, allowed_file_types=None, max_file_
             return gr.Textbox("File type disallowed", visible=True), file_uploads_log
 
         #Start protection of DDOS
+
+        # Read limits from environment variables, with default fallbacks
+        # MAX_FILE_SIZE_MB will be an integer, default to 100 if not set or invalid
+        max_file_size_mb = int(os.getenv("MAX_FILE_SIZE_MB", 100))
+        # MIN_FREE_SPACE_MB will be an integer, default to 500 if not set or invalid
+        min_free_space_mb = int(os.getenv("MIN_FREE_SPACE_MB", 500))
+
         #check size of file to limit DDOS on disk
         file_size_bytes = os.path.getsize(file.name)
         file_size_mb = file_size_bytes / (1024 * 1024)
